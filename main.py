@@ -1,4 +1,5 @@
 import json, subprocess, os
+from pathlib import Path
 import click
 
 
@@ -6,21 +7,19 @@ def get_config_path(is_development):
     if is_development:
        path="devconfig.json"
     else:
-       path="~/.config.pdf_collections.json"
+       path= str(Path.home()) + "/.config.pdf_collections.json"
 
     return path
 
 def get_config(is_development):
 
     path = get_config_path(is_development)
-
     try:
 
         with click.open_file(path, "r") as f:
             json_string = f.read()
         config = json.loads(json_string)
     except FileNotFoundError:
-
         config = {"collections": []}
         update_config(is_development, config)
 
@@ -28,7 +27,7 @@ def get_config(is_development):
 
 def update_config(is_development, config):
     path = get_config_path(is_development)
-    with click.open_file(path, "w") as f:
+    with click.open_file(path, "w+") as f:
         json.dump(config, f)
 
 def get_pdfs(path):
