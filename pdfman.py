@@ -36,6 +36,28 @@ def get_pdfs(path):
     files = [file for file in os.scandir(path) if Path(file.path).suffix == ".pdf"]
     return files
 
+def open_one(path, pdf_files):
+
+    for index in range(0, len(pdf_files)):
+        number = click.style(str(index), fg="blue")
+        name = pdf_files[index].name
+        click.echo(number + " - " + name)
+
+    user_choice = click.prompt('Which one do you want to read?', type=int)
+
+    try:
+        selected_pdf = pdf_files[user_choice]
+        os.system("open " + selected_pdf.path)
+    except IndexError:
+        click.echo(click.style("This number was not an option..", fg="red"))
+
+
+
+def open_all(path, pdf_files):
+    for pdf_file in pdf_files:
+        os.system("open " + pdf_file.path)
+
+
 
 @click.group()
 @click.option('--development', 'development', flag_value=True, default=False)
@@ -71,31 +93,26 @@ def add(ctx, name, path):
 
 @main.command()
 @click.argument("name", type=click.STRING)
+@click.option("--all", "should_open_all", flag_value=True, default=False)
 @click.pass_context
-def open(ctx, name):
+def open(ctx, name, should_open_all):
+
     is_development = ctx.obj["DEVELOPMENT"]
     config = get_config(is_development)
 
     for collection in config.get("collections"):
         if collection.get("name") == name:
+
             path = collection.get("path")
             pdf_files = get_pdfs(path)
-            for index in range(0, len(pdf_files)):
-                number = click.style(str(index), fg="blue")
-                name = pdf_files[index].name
-                click.echo(number + " - " + name)
 
-            user_choice = click.prompt('Which one do you want to read?', type=int)
-
-            try:
-                selected_pdf = pdf_files[user_choice]
-            except IndexError:
-                click.echo(click.style("This number was not an option..", fg="red"))
-                return
-
-            os.system("open " + selected_pdf.path)
+            if should_open_all:
+                open_all(path, pdf_files)
+            else:
+                open_one(path, pdf_files)
             return
-    click.echo("could not find this collection..")
+    click.echo(click.style("Could not find this collection..", fg="yellow"))
+
 
 if __name__ == "__main__":
     main(obj={})
