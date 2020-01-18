@@ -92,6 +92,7 @@ def open(ctx, name):
                     return
 
                 print(selected_pdf.name) # TODO: open thid pdf file
+                os.system("open " + selected_pdf.path)
 
                 return
     click.echo("could not find this collection..")
