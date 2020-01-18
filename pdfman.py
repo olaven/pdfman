@@ -33,7 +33,7 @@ def update_config(is_development, config):
         json.dump(config, f)
 
 def get_pdfs(path):
-    files = [file for file in os.scandir(path) if file.is_file and file.name.endswith(".pdf")]
+    files = [file for file in os.scandir(path) if Path(file.path).suffix == ".pdf"]
     return files
 
 
@@ -85,16 +85,16 @@ def open(ctx, name):
                 name = pdf_files[index].name
                 click.echo(number + " - " + name)
 
-                user_choice = click.prompt('Which one do you want to read?', type=int)
+            user_choice = click.prompt('Which one do you want to read?', type=int)
 
-                try:
-                    selected_pdf = pdf_files[user_choice]
-                except IndexError:
-                    click.echo(click.style("This number was not an option..", fg="red"))
-                    return
-
-                os.system("open " + selected_pdf.path)
+            try:
+                selected_pdf = pdf_files[user_choice]
+            except IndexError:
+                click.echo(click.style("This number was not an option..", fg="red"))
                 return
+
+            os.system("open " + selected_pdf.path)
+            return
     click.echo("could not find this collection..")
 
 if __name__ == "__main__":

@@ -12,4 +12,4 @@ click = "*"
 python_version = "3.7"
 
 [scripts]
-main = "python pdf"
+main = "python pdfman.py"
