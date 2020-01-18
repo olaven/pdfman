@@ -1,4 +1,4 @@
-import json
+import json, subprocess, os
 import click
 
 
@@ -30,6 +30,10 @@ def update_config(is_development, config):
     path = get_config_path(is_development)
     with click.open_file(path, "w") as f:
         json.dump(config, f)
+
+def get_pdfs(path):
+    files = [file for file in os.scandir(path) if file.is_file and file.name.endswith(".pdf")]
+    return files
 
 
 @click.group()
@@ -65,8 +69,19 @@ def add(ctx, name, path):
     update_config(is_development, config)
 
 @main.command()
-def open():
-    click.echo("select one of possible pdfs in selected")
+@click.argument("name", type=click.STRING)
+@click.pass_context
+def open(ctx, name):
+    is_development = ctx.obj["DEVELOPMENT"]
+    config = get_config(is_development)
+
+    for collection in config.get("collections"):
+        if collection.get("name") == name:
+            path = collection.get("path")
+            pdf_files = get_pdfs(path)
+            for file in pdf_files: print(file.name)
+            return
+    click.echo("could not find this collection..")
 
 if __name__ == "__main__":
     main(obj={})
