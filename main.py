@@ -8,23 +8,16 @@ def get_config(is_development):
     else:
        path="~/.config.pdf_collections.json"
 
-    #open(path, "w")
+    try:
+        with click.open_file(path, "r") as f:
+            json_string = f.read()
+        config = json.loads(json_string)
+    except FileNotFoundError:
+        config = {"collections": []}
+        with click.open_file(path, "w") as f:
+            json.dump(config, f)
 
-    return {
-        "collections": [
-            {
-                "name": "forskning",
-                "folder": "~/Documents/skole/kristiania/6_semester/bachelor/forskning"
-            }
-        ]
-    }
-   # try:
-   #     with open(path, "r") as file:
-   #         json_string = file.read()
-   #     config = json.loads(json_string)
-   #     print(config)
-   # except IOError:
-   #     print("io eror caught :)")
+    return config
 
 @click.group()
 @click.option('--development', 'development', flag_value=True, default=False)
