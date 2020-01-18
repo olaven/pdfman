@@ -79,8 +79,22 @@ def open(ctx, name):
         if collection.get("name") == name:
             path = collection.get("path")
             pdf_files = get_pdfs(path)
-            for file in pdf_files: print(file.name)
-            return
+            for index in range(0, len(pdf_files)):
+                number = click.style(str(index), fg="blue")
+                name = pdf_files[index].name
+                click.echo(number + " - " + name)
+
+                user_choice = click.prompt('Which one do you want to read?', type=int)
+
+                try:
+                    selected_pdf = pdf_files[user_choice]
+                except IndexError:
+                    click.echo(click.style("This number was not an option..", fg="red"))
+                    return
+
+                print(selected_pdf.name) # TODO: open thid pdf file
+
+                return
     click.echo("could not find this collection..")
 
 if __name__ == "__main__":
