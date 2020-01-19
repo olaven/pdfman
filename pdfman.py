@@ -113,6 +113,22 @@ def open(ctx, name, should_open_all):
             return
     click.echo(click.style("Could not find this collection..", fg="yellow"))
 
+@main.command()
+@click.argument("pdf", type=click.File())
+@click.argument("name", type=click.STRING)
+@click.pass_context
+def move(ctx, pdf, name):
+    is_development = ctx.obj["DEVELOPMENT"]
+    config = get_config(is_development)
+
+    for collection in config.get("collections"):
+        if collection.get("name") == name:
+
+            path = collection.get("path")
+            os.system("mv " + pdf.name + " " + path)
+            click.echo(click.style(pdf.name + " moved", fg="green"))
+            return
+    click.echo(click.style("Could not find this collection..", fg="yellow"))
 
 if __name__ == "__main__":
     main(obj={})
