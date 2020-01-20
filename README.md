@@ -18,3 +18,5 @@ A tiny "hub" for your folders containing PDF files.
 * `pdfman open homework` let's you open PDFs from the homework folder 
 * `pdfman open books` let's you open PDFs from the books folder 
 
+
+This is another change to demonstrate git changes. 
