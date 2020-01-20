@@ -38,6 +38,7 @@ def get_pdfs(path):
 
 def open_one(path, pdf_files):
 
+    pdf_files.sort(key=lambda f: f.name)
     for index in range(0, len(pdf_files)):
         number = click.style(str(index), fg="blue")
         name = pdf_files[index].name
